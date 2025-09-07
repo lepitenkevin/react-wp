@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import type { WPPost } from "../types";
+import type { WPPost } from "../types/types";
 
 export default function BlogPosts() {
   useEffect(() => {

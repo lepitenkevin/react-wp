@@ -1,34 +1,67 @@
+import { useEffect, useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import { Facebook, Linkedin } from "lucide-react";
+import { ShoppingCart } from "lucide-react";
 
 export default function Header() {
-  return (
-    <header className="bg-white border-b shadow-sm">
-      <div className="max-w-6xl mx-auto flex justify-between items-center p-4">
-        {/* Left: Site Title */}
-        <div className="text-2xl font-bold text-gray-900">
-          <Link to="/">KevinLepiten</Link>
-        </div>
+  const [cartCount, setCartCount] = useState(0);
 
-        {/* Center: Navigation */}
-        <nav className="hidden md:flex gap-6">
+  // Load cart count from localStorage
+  useEffect(() => {
+    const updateCartCount = () => {
+      const cart = JSON.parse(localStorage.getItem("cart") || "[]");
+      const totalItems = cart.reduce(
+        (sum: number, item: { quantity: number }) => sum + item.quantity,
+        0
+      );
+      setCartCount(totalItems);
+    };
+
+    updateCartCount();
+
+    // Listen for storage events (other tabs)
+    window.addEventListener("storage", updateCartCount);
+
+    return () => {
+      window.removeEventListener("storage", updateCartCount);
+    };
+  }, []);
+
+  return (
+    <header className="bg-white shadow-md">
+      <div className="max-w-6xl mx-auto flex justify-between items-center p-4">
+        {/* Logo / Site Title */}
+        <Link to="/" className="text-2xl font-bold text-gray-900">
+          Kevin Lepiten
+        </Link>
+
+        {/* Navigation */}
+        <nav className="flex items-center space-x-6">
           <NavLink
             to="/"
             className={({ isActive }) =>
-              `text-gray-700 hover:text-blue-600 ${
-                isActive ? "font-semibold text-blue-600" : ""
-              }`
+              isActive
+                ? "text-blue-600 font-semibold"
+                : "text-gray-700 hover:text-blue-600"
             }
           >
             Home
           </NavLink>
-
+          <NavLink
+            to="/products"
+            className={({ isActive }) =>
+              isActive
+                ? "text-blue-600 font-semibold"
+                : "text-gray-700 hover:text-blue-600"
+            }
+          >
+            Products
+          </NavLink>
           <NavLink
             to="/about"
             className={({ isActive }) =>
-              `text-gray-700 hover:text-blue-600 ${
-                isActive ? "font-semibold text-blue-600" : ""
-              }`
+              isActive
+                ? "text-blue-600 font-semibold"
+                : "text-gray-700 hover:text-blue-600"
             }
           >
             About
@@ -36,33 +69,24 @@ export default function Header() {
           <NavLink
             to="/contact"
             className={({ isActive }) =>
-              `text-gray-700 hover:text-blue-600 ${
-                isActive ? "font-semibold text-blue-600" : ""
-              }`
+              isActive
+                ? "text-blue-600 font-semibold"
+                : "text-gray-700 hover:text-blue-600"
             }
           >
-            Contact Me
+            Contact
           </NavLink>
+
+          {/* Cart Icon */}
+          <Link to="/cart" className="relative">
+            <ShoppingCart className="w-6 h-6 text-gray-700 hover:text-blue-600" />
+            {cartCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">
+                {cartCount}
+              </span>
+            )}
+          </Link>
         </nav>
-
-        {/* Right: Social Icons */}
-        <div className="flex gap-4">
-          <a
-            href="https://facebook.com/varcharnamekevin"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Facebook className="w-5 h-5 text-gray-600 hover:text-blue-600" />
-          </a>
-
-          <a
-            href="https://www.linkedin.com/in/kevinlepiten/"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <Linkedin className="w-5 h-5 text-gray-600 hover:text-blue-700" />
-          </a>
-        </div>
       </div>
     </header>
   );

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import type { WPPost } from "../types";
+import type { WPPost } from "../types/types";
 
 export default function SinglePost() {
   const { id } = useParams<{ id: string }>();
