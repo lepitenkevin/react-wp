@@ -10,8 +10,15 @@ interface CartItem {
 }
 
 export default function Cart() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-
+  const [cart, setCart] = useState<CartItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("cart");
+      return saved ? JSON.parse(saved) : [];
+    } catch (err) {
+      console.error("Failed to parse cart from localStorage:", err);
+      return [];
+    }
+  });
   // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = JSON.parse(localStorage.getItem("cart") || "[]");
