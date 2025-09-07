@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/api";
+import { fetchProducts } from "../api/wooApi";
 import type { WCProduct } from "../types/types";
 import { addToCart } from "../types/cart"; // import the utility
 
@@ -9,16 +9,30 @@ export default function ProductList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api
-      .get<WCProduct[]>("products")
-      .then((res) => {
-        setProducts(res.data);
+    // Set the page title
+    document.title = "Products - Kevin Lepiten";
+
+    // Update or create meta description
+    const description = "Product List page description here.";
+    let metaTag = document.querySelector("meta[name='description']");
+
+    if (metaTag) {
+      metaTag.setAttribute("content", description);
+    } else {
+      metaTag = document.createElement("meta");
+      metaTag.setAttribute("name", "description");
+      metaTag.setAttribute("content", description);
+      document.head.appendChild(metaTag);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts()
+      .then((data) => {
+        setProducts(data);
         setLoading(false);
       })
-      .catch((err) => {
-        console.error("Error fetching products:", err);
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   }, []);
 
   if (loading)
